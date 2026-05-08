@@ -1,53 +1,53 @@
-
+// modules/clients/clients.service.ts
 
 import { prisma } from "@/lib/prisma";
-import {
-  createClientSchema,
-  createContactSchema,
-  updateClientSchema,
+import type {
+  CreateClientInput,
+  UpdateClientInput,
 } from "./clients.schema";
 
-export async function createClient(input: unknown) {
-  const data = createClientSchema.parse(input);
+export async function getClients() {
+  return prisma.cliente.findMany({
+    orderBy: {
+      creadoEn: "desc",
+    },
+  });
+}
 
+export async function getClientById(id: string) {
+  return prisma.cliente.findUnique({
+    where: {
+      idCliente: id,
+    },
+    include: {
+      contactos: true,
+      proyectos: true,
+    },
+  });
+}
+
+export async function createClient(data: CreateClientInput) {
   return prisma.cliente.create({
     data: {
       tipoDocumento: data.tipoDocumento,
       numeroDocumento: data.numeroDocumento,
       razonSocial: data.razonSocial,
       telefonoPrincipal: data.telefonoPrincipal,
-      emailPrincipal: data.emailPrincipal || null,
+      emailPrincipal: data.emailPrincipal,
       direccion: data.direccion,
-      estado: data.estado,
+      estadoCliente: data.estadoCliente,
     },
   });
 }
 
-export async function updateClient(input: unknown) {
-  const data = updateClientSchema.parse(input);
-
-  const { id, ...updateData } = data;
-
+export async function updateClient(
+  id: string,
+  data: UpdateClientInput
+) {
   return prisma.cliente.update({
-    where: { id },
-    data: updateData,
-  });
-}
-
-export async function createClientContact(input: unknown) {
-  const data = createContactSchema.parse(input);
-
-  return prisma.contactoCliente.create({
-    data: {
-      clienteId: data.clienteId,
-      nombres: data.nombres,
-      cargo: data.cargo,
-      telefono: data.telefono,
-      email: data.email || null,
-      esContactoPrincipal: data.esContactoPrincipal,
-      recibeCobranza: data.recibeCobranza,
-      recibeRecordatorios: data.recibeRecordatorios,
-      activo: data.activo,
+    where: {
+      idCliente: id,
     },
+    data,
   });
 }

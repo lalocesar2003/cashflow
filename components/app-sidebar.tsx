@@ -23,6 +23,7 @@ const navigationItems = [
   { title: 'Automatización', icon: Zap, href: '/automation' },
   { title: 'Analistas', icon: Users, href: '/analysts' },
   { title: 'Configuración', icon: Settings, href: '/settings' },
+  { title: 'Clientes', icon: Users, href: '/clients' }
 ];
 
 export function AppSidebar() {
